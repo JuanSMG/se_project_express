@@ -1,6 +1,7 @@
-export const OK_ERROR = 200;
-export const CREATED_ERROR = 201;
-export const BAD_REQUEST_ERROR = 400;
-export const NOT_FOUND_ERROR = 404;
-export const DEFAULT_ERROR = 500;
-
+module.exports = {
+  OK_ERROR: 200,
+  CREATED_ERROR: 201,
+  BAD_REQUEST_ERROR: 400,
+  NOT_FOUND_ERROR: 404,
+  DEFAULT_ERROR: 500,
+};
