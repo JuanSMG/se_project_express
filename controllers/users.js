@@ -1,7 +1,7 @@
 const User = require("../models/user");
 const {
-  OK_ERROR,
-  CREATED_ERROR,
+  OK_STATUS,
+  CREATED_STATUS,
   BAD_REQUEST_ERROR,
   NOT_FOUND_ERROR,
   DEFAULT_ERROR,
@@ -9,7 +9,7 @@ const {
 
 const getUsers = (req, res) => {
   User.find({})
-    .then((users) => res.status(OK_ERROR).send(users))
+    .then((users) => res.status(OK_STATUS).send(users))
     .catch((err) => {
       console.error(err);
       return res
@@ -22,7 +22,7 @@ const createUser = (req, res) => {
   const { name, avatar } = req.body;
 
   User.create({ name, avatar })
-    .then((user) => res.status(CREATED_ERROR).send(user))
+    .then((user) => res.status(CREATED_STATUS).send(user))
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
@@ -39,7 +39,7 @@ const createUser = (req, res) => {
 const getUserById = (req, res) => {
   User.findById(req.params.userId)
     .orFail() // This will throw a DocumentNotFoundError if no user is found
-    .then((user) => res.status(OK_ERROR).send(user))
+    .then((user) => res.status(OK_STATUS).send(user))
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {

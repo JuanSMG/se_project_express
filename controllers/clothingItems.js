@@ -1,7 +1,7 @@
 const ClothingItem = require("../models/clothingItem");
 const {
-  OK_ERROR,
-  CREATED_ERROR,
+  OK_STATUS,
+  CREATED_STATUS,
   BAD_REQUEST_ERROR,
   NOT_FOUND_ERROR,
   DEFAULT_ERROR,
@@ -9,8 +9,7 @@ const {
 
 const getClothingItems = (req, res) => {
   ClothingItem.find({})
-    .populate(["owner"])
-    .then((item) => res.status(OK_ERROR).send(item))
+    .then((item) => res.status(OK_STATUS).send(item))
     .catch((err) => {
       console.error(err);
       return res
@@ -23,7 +22,7 @@ const createClothingItem = (req, res) => {
   const { name, weather, imageUrl } = req.body;
   const ownerId = req.user._id;
   ClothingItem.create({ name, weather, imageUrl, owner: ownerId })
-    .then((item) => res.status(CREATED_ERROR).send(item))
+    .then((item) => res.status(CREATED_STATUS).send(item))
     .catch((err) => {
       console.log(ownerId);
       console.error(err);
@@ -39,13 +38,11 @@ const createClothingItem = (req, res) => {
 };
 
 const deleteClothingItem = (req, res) => {
-  ClothingItem.findByIdAndDelete(req.params.itemId)
+  const { itemId } = req.params;
+
+  ClothingItem.findById(itemId)
     .orFail()
-    .then(() =>
-      res
-        .status(OK_ERROR)
-        .send({ message: "Clothing item deleted successfully" })
-    )
+    .then((item) => ClothingItem.deleteOne(item).then(() => res.send(item)))
     .catch((err) => {
       console.error(err);
       if (err.name === "CastError") {
@@ -71,7 +68,7 @@ const likeItem = (req, res) => {
     { new: true }
   )
     .orFail()
-    .then((item) => res.status(OK_ERROR).send({ data: item }))
+    .then((item) => res.status(OK_STATUS).send({ data: item }))
     .catch((err) => {
       console.error(err);
       if (err.name === "CastError") {
@@ -97,11 +94,7 @@ const dislikeItem = (req, res) => {
     { new: true }
   )
     .orFail()
-    .then(() =>
-      res
-        .status(OK_ERROR)
-        .send({ message: "Clothing item disliked successfully" })
-    )
+    .then((item) => res.status(OK_STATUS).send(item))
     .catch((err) => {
       console.error(err);
       if (err.name === "CastError") {
