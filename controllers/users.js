@@ -48,7 +48,7 @@ const createUser = (req, res) => {
       .send({ message: "Email and password are required for registration" });
   }
 
-  bcrypt
+  return bcrypt
     .hash(password, 10)
     .then((hash) =>
       User.create({
