@@ -26,7 +26,7 @@ const login = (req, res) => {
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
         expiresIn: "7d",
       });
-      return res.status(200).send({ token });
+      return res.status(OK_STATUS).send({ token });
     })
     .catch((err) => {
       if (err.message === "Invalid email or password") {
@@ -41,6 +41,12 @@ const login = (req, res) => {
 
 const createUser = (req, res, next) => {
   const { name, avatar, email, password } = req.body;
+
+  if (!email || !password) {
+    return res
+      .status(BAD_REQUEST_ERROR)
+      .send({ message: "Email and password are required for registration" });
+  }
 
   bcrypt
     .hash(password, 10)
@@ -109,15 +115,14 @@ const updateProfile = (req, res) => {
     { name, avatar },
     { new: true, runValidators: true }
   )
-    .then((user) => res.send(user))
+    .orFail.then((user) => res.send(user))
     .catch((err) => {
-      console.error(err);
-
-      if (err.name === "CastError") {
+      if (err.name === "ValidationError") {
         return res
           .status(BAD_REQUEST_ERROR)
-          .send({ message: "Invalid user ID format" });
+          .send({ message: "Invalid user data" });
       }
+      console.error(err);
       if (err.name === "DocumentNotFoundError") {
         return res.status(NOT_FOUND_ERROR).send({ message: "User not found" });
       }

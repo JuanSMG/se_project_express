@@ -23,6 +23,11 @@ app.post("/signup", createUser);
 
 app.use("/", mainRouter);
 
+app.use((err, req, res) => {
+  console.error(err);
+  res.status(500).send({ message: "An error has occurred on the server" });
+});
+
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);
 });
