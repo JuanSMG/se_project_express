@@ -39,7 +39,7 @@ const login = (req, res) => {
     });
 };
 
-const createUser = (req, res, next) => {
+const createUser = (req, res) => {
   const { name, avatar, email, password } = req.body;
 
   if (!email || !password) {
@@ -78,7 +78,9 @@ const createUser = (req, res, next) => {
           .status(BAD_REQUEST_ERROR)
           .send({ message: "Invalid user data" });
       }
-      return next(err);
+      return res
+        .status(DEFAULT_ERROR)
+        .send({ message: "An error has occurred on the server" });
     });
 };
 
