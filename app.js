@@ -1,8 +1,8 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const cors = require("cors");
 const mainRouter = require("./routes/index");
 const { login, createUser } = require("./controllers/users");
-const cors = require("cors");
 
 const app = express();
 
@@ -15,12 +15,6 @@ mongoose
   })
   .catch(console.error);
 
-// app.use((req, res, next) => {
-//   req.user = {
-//     _id: "69fb813a4e2e931638d47c1a",
-//   };
-//   next();
-// }); --- added from the last Sprint, but now we will use auth middleware instead of this hardcoded user
 app.use(cors());
 app.use(express.json());
 
