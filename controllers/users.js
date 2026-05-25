@@ -117,7 +117,7 @@ const updateProfile = (req, res) => {
     { name, avatar },
     { new: true, runValidators: true }
   )
-    .orFail.then((user) => res.send(user))
+    .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === "ValidationError") {
         return res
