@@ -5,6 +5,7 @@ const {
   BAD_REQUEST_ERROR,
   NOT_FOUND_ERROR,
   DEFAULT_ERROR,
+  FORBIDDEN_ERROR,
 } = require("../utils/error");
 
 const getClothingItems = (req, res) => {
@@ -39,10 +40,18 @@ const createClothingItem = (req, res) => {
 
 const deleteClothingItem = (req, res) => {
   const { itemId } = req.params;
+  const userId = req.user._id;
 
   ClothingItem.findById(itemId)
     .orFail()
-    .then((item) => ClothingItem.deleteOne(item).then(() => res.send(item)))
+    .then((item) => {
+      if (item.owner.toString() !== userId) {
+        return res
+          .status(FORBIDDEN_ERROR)
+          .send({ message: "You are not the owner of this item" });
+      }
+      return ClothingItem.deleteOne(item).then(() => res.send(item));
+    })
     .catch((err) => {
       console.error(err);
       if (err.name === "CastError") {
