@@ -62,17 +62,16 @@ const createUser = (req, res, next) => {
     .catch((err) => {
       console.log(err.code);
       console.error(err);
-      if (err.name === "ValidationError") {
-        return res
-          .status(BAD_REQUEST_ERROR)
-          .send({ message: "Invalid user data" });
-      }
       if (err.code === 11000) {
         return res
           .status(CONFLICT_ERROR)
           .send({ message: "Email already exists" });
       }
-
+      if (err.name === "ValidationError") {
+        return res
+          .status(BAD_REQUEST_ERROR)
+          .send({ message: "Invalid user data" });
+      }
       return next(err);
     });
 };
@@ -83,6 +82,11 @@ const getCurrentUser = (req, res) => {
     .then((user) => res.status(OK_STATUS).send(user))
     .catch((err) => {
       console.error(err);
+      if (err.name === "ValidationError") {
+        return res
+          .status(UNAUTHORIZED_ERROR)
+          .send({ message: "Unauthorized: Invalid token" });
+      }
       if (err.name === "CastError") {
         return res
           .status(BAD_REQUEST_ERROR)
